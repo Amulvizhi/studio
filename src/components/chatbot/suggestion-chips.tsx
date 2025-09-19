@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { InterpretUserIntentsOutput } from "@/ai/flows/interpret-user-intents";
@@ -13,10 +14,11 @@ export default function SuggestionChips({
   onSelect,
 }: SuggestionChipsProps) {
   const {
-    suggestedDateOptions,
-    suggestedTimeOptions,
-    suggestedTicketQuantities,
+    suggestedDateOptions = [],
+    suggestedTimeOptions = [],
+    suggestedTicketQuantities = [],
     additionalContext,
+    isAmbiguous,
   } = interpretation;
 
   const hasSuggestions =
@@ -27,7 +29,7 @@ export default function SuggestionChips({
   return (
     <div className="space-y-3">
         {additionalContext && <p className="text-sm">{additionalContext}</p>}
-        {!hasSuggestions && <p>How can I help you with booking?</p>}
+        {isAmbiguous && !hasSuggestions && <p>I can help with booking. For example, you can say "Two tickets for the National Museum" to start.</p>}
         
         {suggestedDateOptions.length > 0 && (
             <div className="flex flex-wrap gap-2">

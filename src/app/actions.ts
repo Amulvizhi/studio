@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { interpretUserIntents } from '@/ai/flows/interpret-user-intents';
@@ -18,33 +19,46 @@ export async function getAiResponse(
   userRequest: string,
   currentState: BookingState
 ): Promise<{ interpretation: InterpretUserIntentsOutput; bookingState: BookingState, eventData?: Exhibit | null }> {
-  // Simple logic to extract exact matches for exhibits
-  const lowerUserRequest = userRequest.toLowerCase();
-  const matchedExhibit = allExhibits.find(exhibit => lowerUserRequest.includes(exhibit.title.toLowerCase()));
-
-  if (matchedExhibit && !currentState.event) {
-    currentState.event = matchedExhibit.title;
-  }
-  
-  // If the user request is just a number, assume it's the quantity
-  const quantityInRequest = parseInt(userRequest, 10);
-  if (!isNaN(quantityInRequest) && quantityInRequest > 0 && !currentState.quantity) {
-    currentState.quantity = quantityInRequest;
-  }
 
   const interpretation = await interpretUserIntents({ userRequest });
 
-  // A simple mechanism to update state based on interpretation
-  if (interpretation.suggestedDateOptions.length > 0 && !currentState.date) {
-    // A real app would need more logic here to handle date selection
+  // Update state with extracted entities
+  const updatedState = { ...currentState };
+  if (interpretation.event && !updatedState.event) {
+    // Fuzzy match exhibit
+    const matchedExhibit = allExhibits.find(exhibit => 
+      exhibit.title.toLowerCase().includes(interpretation.event!.toLowerCase())
+    );
+    if (matchedExhibit) {
+      updatedState.event = matchedExhibit.title;
+    }
   }
-  if (interpretation.suggestedTicketQuantities.length > 0 && !currentState.quantity) {
-    // This is handled by the initial quantity check, but could be expanded
+  if (interpretation.date && !updatedState.date) {
+    updatedState.date = interpretation.date;
+  }
+  if (interpretation.time && !updatedState.time) {
+    updatedState.time = interpretation.time;
+  }
+  if (interpretation.quantity && !updatedState.quantity) {
+    updatedState.quantity = interpretation.quantity;
   }
 
-  const eventData = currentState.event ? allExhibits.find(e => e.title === currentState.event) || null : null;
+  // Handle cases where interpretation might not catch a simple number or direct exhibit match
+  const lowerUserRequest = userRequest.toLowerCase();
+  const matchedExhibit = allExhibits.find(exhibit => lowerUserRequest.includes(exhibit.title.toLowerCase()));
 
-  return { interpretation, bookingState: currentState, eventData };
+  if (matchedExhibit && !updatedState.event) {
+    updatedState.event = matchedExhibit.title;
+  }
+
+  const quantityInRequest = parseInt(userRequest, 10);
+  if (!isNaN(quantityInRequest) && quantityInRequest > 0 && !updatedState.quantity) {
+    updatedState.quantity = quantityInRequest;
+  }
+
+  const eventData = updatedState.event ? allExhibits.find(e => e.title === updatedState.event) || null : null;
+
+  return { interpretation, bookingState: updatedState, eventData };
 }
 
 export async function checkAvailability(

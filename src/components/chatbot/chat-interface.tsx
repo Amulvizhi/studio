@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -21,11 +22,12 @@ interface Message {
   content: React.ReactNode;
 }
 
-const initialInterpretation: InterpretUserIntentsOutput = {
+const initialSuggestions: InterpretUserIntentsOutput = {
   suggestedDateOptions: [],
   suggestedTimeOptions: [],
   suggestedTicketQuantities: [1, 2, 4],
-  additionalContext: "Hello! I'm your personal ticketing assistant. I can help you book tickets for museum exhibits. How many tickets are you looking for?"
+  additionalContext: "Hello! I'm your personal ticketing assistant. I can help you book tickets for museum exhibits. How can I help you get started?",
+  isAmbiguous: true,
 }
 
 const initialMessage: Message = {
@@ -33,7 +35,7 @@ const initialMessage: Message = {
     role: "assistant",
     content: (
       <SuggestionChips 
-        interpretation={initialInterpretation} 
+        interpretation={initialSuggestions} 
         onSelect={() => {}} 
       />
     )
@@ -70,16 +72,19 @@ export default function ChatInterface() {
       const { interpretation, bookingState: updatedState, eventData } = await getAiResponse(text, { ...bookingState });
       setBookingState(updatedState);
 
-      let content: React.ReactNode = "I'm not sure how to help with that. Please try asking about our exhibits.";
+      let content: React.ReactNode;
 
-      // State machine for conversation flow
-      if (updatedState.event && !updatedState.quantity) {
-          content = `Great! How many tickets would you like for "${updatedState.event}"?`;
-      } else if (updatedState.event && updatedState.quantity && !updatedState.date) {
-         content = `Perfect. For "${updatedState.event}" for ${updatedState.quantity} people, what date works for you?`;
-      } else if (updatedState.event && updatedState.quantity && updatedState.date && !updatedState.time) {
-         content = `Ok, what time on ${updatedState.date} would you like?`;
-      } else if (updatedState.event && updatedState.quantity && updatedState.date && updatedState.time) {
+      // New conversation logic
+      if (!updatedState.event) {
+        content = "Which museum or exhibit would you like to visit?";
+      } else if (!updatedState.quantity) {
+        content = `Great! How many tickets would you like for "${updatedState.event}"?`;
+      } else if (!updatedState.date) {
+        content = `Perfect. For "${updatedState.event}" for ${updatedState.quantity} people, what date works for you?`;
+      } else if (!updatedState.time) {
+        content = `Ok, what time on ${updatedState.date} would you like?`;
+      } else {
+        // All info collected, check availability
         const availability = await checkAvailability({
           event: updatedState.event,
           date: updatedState.date,
@@ -95,25 +100,27 @@ export default function ChatInterface() {
             </div>
           );
         } else {
-          content = `Unfortunately, we don't have ${updatedState.quantity} tickets available. We have ${availability.availableTickets} left. Would you like to book those instead?`;
-          // Reset for re-booking
-          setBookingState({ event: updatedState.event });
+          content = `Unfortunately, we don't have ${updatedState.quantity} tickets available for that time. We only have ${availability.availableTickets} left. Would you like to book those instead, or try a different time?`;
+          // Reset time to ask again
+          setBookingState({ ...updatedState, time: undefined });
         }
-      } else if (interpretation.suggestedDateOptions.length > 0 || interpretation.suggestedTicketQuantities.length > 0) {
-        content = (
+      }
+
+      if (interpretation.isAmbiguous && !updatedState.event) {
+         content = (
           <SuggestionChips
-            interpretation={interpretation}
-            onSelect={(value) => handleSuggestionSelect(value)}
+            interpretation={initialSuggestions}
+            onSelect={(value) => handleSuggestionSelect(value, updatedState)}
           />
         );
-      } else if (updatedState.event) {
-        content = `I see you're interested in "${updatedState.event}". What date and how many tickets are you looking for?`
       }
+
 
       const aiMessage: Message = { id: uuidv4(), role: "assistant", content };
       setMessages((prev) => [...prev, aiMessage]);
 
     } catch (error) {
+      console.error(error);
       const errorMessage: Message = {
         id: uuidv4(),
         role: "assistant",
@@ -125,24 +132,7 @@ export default function ChatInterface() {
     }
   };
 
-  const handleSuggestionSelect = (value: string | number) => {
-    // If it's the initial message, we just want to send the message
-    if (messages.length === 1 && messages[0].id === initialMessage.id) {
-       // do nothing special
-    }
-    
-    let updatedState = { ...bookingState };
-    if (typeof value === "number") {
-      updatedState.quantity = value;
-    } else {
-        // This is a simplified logic
-        if (["Tomorrow", "This weekend", "Next week"].includes(value)) {
-            updatedState.date = value;
-        } else {
-            updatedState.time = value;
-        }
-    }
-    setBookingState(updatedState);
+  const handleSuggestionSelect = (value: string | number, currentState: BookingState) => {
     handleSendMessage(String(value));
   };
 
@@ -160,8 +150,8 @@ export default function ChatInterface() {
                 // Special handler for the first message with our custom onSelect
                 message.id === initialMessage.id ? (
                   <SuggestionChips 
-                    interpretation={initialInterpretation}
-                    onSelect={(value) => handleSuggestionSelect(value)}
+                    interpretation={initialSuggestions}
+                    onSelect={(value) => handleSuggestionSelect(value, bookingState)}
                   />
                 ) : (
                   message.content
