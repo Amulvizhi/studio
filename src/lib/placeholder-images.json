@@ -1,52 +1,52 @@
 {
   "placeholderImages": [
     {
-      "id": "ancient-worlds",
-      "description": "A person looking at ancient artifacts in a museum.",
-      "imageUrl": "https://picsum.photos/seed/101/600/400",
-      "imageHint": "ancient artifacts"
+      "id": "national-museum",
+      "description": "The grand facade of the National Museum in New Delhi.",
+      "imageUrl": "https://picsum.photos/seed/201/600/400",
+      "imageHint": "Indian museum"
     },
     {
-      "id": "modern-art",
-      "description": "A colorful abstract painting in a modern art gallery.",
-      "imageUrl": "https://picsum.photos/seed/102/600/400",
-      "imageHint": "abstract painting"
+      "id": "indian-museum",
+      "description": "The stately exterior of the Indian Museum in Kolkata.",
+      "imageUrl": "https://picsum.photos/seed/202/600/400",
+      "imageHint": "Kolkata museum"
     },
     {
-      "id": "dino-exhibit",
-      "description": "A large dinosaur skeleton exhibit in a museum hall.",
-      "imageUrl": "https://picsum.photos/seed/103/600/400",
-      "imageHint": "dinosaur skeleton"
+      "id": "csmvs-mumbai",
+      "description": "The impressive architecture of Chhatrapati Shivaji Maharaj Vastu Sangrahalaya.",
+      "imageUrl": "https://picsum.photos/seed/203/600/400",
+      "imageHint": "Mumbai museum"
     },
     {
-      "id": "space-journey",
-      "description": "An interactive exhibit about space exploration with planets and rockets.",
-      "imageUrl": "https://picsum.photos/seed/104/600/400",
-      "imageHint": "space exhibit"
+      "id": "salar-jung-museum",
+      "description": "An ornate artifact on display at the Salar Jung Museum.",
+      "imageUrl": "https://picsum.photos/seed/204/600/400",
+      "imageHint": "Hyderabad museum"
     },
     {
-      "id": "renaissance-masters",
-      "description": "A classic Renaissance portrait painting in an ornate frame.",
-      "imageUrl": "https://picsum.photos/seed/105/600/400",
-      "imageHint": "renaissance painting"
+      "id": "government-museum",
+      "description": "A view of the Government Museum campus in Chennai.",
+      "imageUrl": "https://picsum.photos/seed/205/600/400",
+      "imageHint": "Chennai museum"
     },
     {
-      "id": "ocean-life",
-      "description": "A vibrant aquarium exhibit with coral reefs and tropical fish.",
-      "imageUrl": "https://picsum.photos/seed/106/600/400",
-      "imageHint": "aquarium exhibit"
+      "id": "dolls-museum",
+      "description": "A collection of diverse dolls at Shankar's International Dolls Museum.",
+      "imageUrl": "https://picsum.photos/seed/206/600/400",
+      "imageHint": "dolls museum"
     },
     {
-      "id": "sculpture-garden",
-      "description": "An outdoor sculpture garden with modern art installations.",
-      "imageUrl": "https://picsum.photos/seed/107/600/400",
-      "imageHint": "sculpture garden"
+      "id": "calico-museum",
+      "description": "A beautiful textile pattern at the Calico Museum of Textiles.",
+      "imageUrl": "https://picsum.photos/seed/207/600/400",
+      "imageHint": "textile museum"
     },
     {
-      "id": "fashion-history",
-      "description": "Vintage dresses and costumes displayed on mannequins.",
-      "imageUrl": "https://picsum.photos/seed/108/600/400",
-      "imageHint": "fashion history"
+      "id": "napier-museum",
+      "description": "The unique architecture of the Napier Museum in Kerala.",
+      "imageUrl": "https://picsum.photos/seed/208/600/400",
+      "imageHint": "Kerala museum"
     }
   ]
 }
