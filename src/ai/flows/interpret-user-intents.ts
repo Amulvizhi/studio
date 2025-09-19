@@ -35,11 +35,11 @@ const prompt = ai.definePrompt({
   output: {schema: InterpretUserIntentsOutputSchema},
   prompt: `You are a ticket booking assistant. A user has made the following request:
 
-{{userRequest}}
+"{{userRequest}}"
 
-Based on this request, suggest several options for dates, times, and ticket quantities that might be relevant to the user.
-If the request is ambiguous, provide options that cover common scenarios.
-If the request provides enough information to start the booking process, return empty arrays for suggestedDateOptions, suggestedTimeOptions, and suggestedTicketQuantities.
+- If the user request is a number, assume it's the desired quantity of tickets. In this case, return empty arrays for all suggestion fields.
+- If the request is ambiguous (e.g., "I want tickets"), suggest several options for dates, times, and ticket quantities that might be relevant.
+- If the request provides enough information to start the booking process (e.g., "2 tickets for tomorrow"), return empty arrays for all suggestion fields.
 
 Format your output as a JSON object with the following keys:
 - suggestedDateOptions: An array of strings representing suggested dates (e.g., ["Tomorrow", "This weekend", "Next week"]).

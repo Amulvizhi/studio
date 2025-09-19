@@ -26,14 +26,20 @@ export async function getAiResponse(
     currentState.event = matchedExhibit.title;
   }
   
+  // If the user request is just a number, assume it's the quantity
+  const quantityInRequest = parseInt(userRequest, 10);
+  if (!isNaN(quantityInRequest) && quantityInRequest > 0 && !currentState.quantity) {
+    currentState.quantity = quantityInRequest;
+  }
+
   const interpretation = await interpretUserIntents({ userRequest });
 
-  // A simple mechanism to update state based on interpretation - this would be more robust in a real app
+  // A simple mechanism to update state based on interpretation
   if (interpretation.suggestedDateOptions.length > 0 && !currentState.date) {
-    // a real app would need more logic here
+    // A real app would need more logic here to handle date selection
   }
-   if (interpretation.suggestedTicketQuantities.length > 0 && !currentState.quantity) {
-    // a real app would need more logic here
+  if (interpretation.suggestedTicketQuantities.length > 0 && !currentState.quantity) {
+    // This is handled by the initial quantity check, but could be expanded
   }
 
   const eventData = currentState.event ? allExhibits.find(e => e.title === currentState.event) || null : null;
