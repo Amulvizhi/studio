@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "ancient-worlds",
+      "description": "A person looking at ancient artifacts in a museum.",
+      "imageUrl": "https://picsum.photos/seed/101/600/400",
+      "imageHint": "ancient artifacts"
+    },
+    {
+      "id": "modern-art",
+      "description": "A colorful abstract painting in a modern art gallery.",
+      "imageUrl": "https://picsum.photos/seed/102/600/400",
+      "imageHint": "abstract painting"
+    },
+    {
+      "id": "dino-exhibit",
+      "description": "A large dinosaur skeleton exhibit in a museum hall.",
+      "imageUrl": "https://picsum.photos/seed/103/600/400",
+      "imageHint": "dinosaur skeleton"
+    },
+    {
+      "id": "space-journey",
+      "description": "An interactive exhibit about space exploration with planets and rockets.",
+      "imageUrl": "https://picsum.photos/seed/104/600/400",
+      "imageHint": "space exhibit"
+    },
+    {
+      "id": "renaissance-masters",
+      "description": "A classic Renaissance portrait painting in an ornate frame.",
+      "imageUrl": "https://picsum.photos/seed/105/600/400",
+      "imageHint": "renaissance painting"
+    },
+    {
+      "id": "ocean-life",
+      "description": "A vibrant aquarium exhibit with coral reefs and tropical fish.",
+      "imageUrl": "https://picsum.photos/seed/106/600/400",
+      "imageHint": "aquarium exhibit"
+    },
+    {
+      "id": "sculpture-garden",
+      "description": "An outdoor sculpture garden with modern art installations.",
+      "imageUrl": "https://picsum.photos/seed/107/600/400",
+      "imageHint": "sculpture garden"
+    },
+    {
+      "id": "fashion-history",
+      "description": "Vintage dresses and costumes displayed on mannequins.",
+      "imageUrl": "https://picsum.photos/seed/108/600/400",
+      "imageHint": "fashion history"
+    }
+  ]
 }
