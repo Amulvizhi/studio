@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -20,10 +21,22 @@ interface Message {
   content: React.ReactNode;
 }
 
+const initialInterpretation: InterpretUserIntentsOutput = {
+  suggestedDateOptions: [],
+  suggestedTimeOptions: [],
+  suggestedTicketQuantities: [1, 2, 4],
+  additionalContext: "Hello! I'm your personal ticketing assistant. I can help you book tickets for museum exhibits. How many tickets are you looking for?"
+}
+
 const initialMessage: Message = {
     id: uuidv4(),
     role: "assistant",
-    content: "Hello! I'm your personal ticketing assistant. How can I help you today? You can ask me to book tickets for an exhibit.",
+    content: (
+      <SuggestionChips 
+        interpretation={initialInterpretation} 
+        onSelect={() => {}} 
+      />
+    )
 };
 
 export default function ChatInterface() {
@@ -113,6 +126,11 @@ export default function ChatInterface() {
   };
 
   const handleSuggestionSelect = (value: string | number) => {
+    // If it's the initial message, we just want to send the message
+    if (messages.length === 1 && messages[0].id === initialMessage.id) {
+       // do nothing special
+    }
+    
     let updatedState = { ...bookingState };
     if (typeof value === "number") {
       updatedState.quantity = value;
@@ -138,7 +156,18 @@ export default function ChatInterface() {
         <ScrollArea className="h-[450px] w-full p-4" ref={scrollAreaRef}>
           <div className="space-y-4">
             {messages.map((message) => (
-              <ChatMessage key={message.id} {...message} />
+              <ChatMessage key={message.id} {...message} role={message.role} content={
+                // Special handler for the first message with our custom onSelect
+                message.id === initialMessage.id ? (
+                  <SuggestionChips 
+                    interpretation={initialInterpretation}
+                    onSelect={(value) => handleSuggestionSelect(value)}
+                  />
+                ) : (
+                  message.content
+                )
+              }
+            />
             ))}
             {isLoading && (
               <ChatMessage
@@ -156,3 +185,5 @@ export default function ChatInterface() {
     </Card>
   );
 }
+
+    
