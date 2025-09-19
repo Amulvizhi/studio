@@ -13,6 +13,7 @@ export interface BookingState {
   date?: string;
   time?: string;
   quantity?: number;
+  exhibitId?: string;
 }
 
 export async function getAiResponse(
@@ -24,39 +25,37 @@ export async function getAiResponse(
 
   // Update state with extracted entities
   const updatedState = { ...currentState };
-  if (interpretation.event && !updatedState.event) {
-    // Fuzzy match exhibit
-    const matchedExhibit = allExhibits.find(exhibit => 
-      exhibit.title.toLowerCase().includes(interpretation.event!.toLowerCase())
+  
+  const lowerUserRequest = userRequest.toLowerCase();
+  
+  // Try to match an exhibit from user request if not already set
+  if (!updatedState.event) {
+    const mentionedExhibit = allExhibits.find(exhibit => 
+      lowerUserRequest.includes(exhibit.title.toLowerCase()) || 
+      (interpretation.event && exhibit.title.toLowerCase().includes(interpretation.event.toLowerCase()))
     );
-    if (matchedExhibit) {
-      updatedState.event = matchedExhibit.title;
+
+    if (mentionedExhibit) {
+      updatedState.event = mentionedExhibit.title;
+      updatedState.exhibitId = mentionedExhibit.id;
     }
   }
+
   if (interpretation.date && !updatedState.date) {
     updatedState.date = interpretation.date;
   }
   if (interpretation.time && !updatedState.time) {
     updatedState.time = interpretation.time;
   }
-  if (interpretation.quantity && !updatedState.quantity) {
-    updatedState.quantity = interpretation.quantity;
-  }
-
-  // Handle cases where interpretation might not catch a simple number or direct exhibit match
-  const lowerUserRequest = userRequest.toLowerCase();
-  const matchedExhibit = allExhibits.find(exhibit => lowerUserRequest.includes(exhibit.title.toLowerCase()));
-
-  if (matchedExhibit && !updatedState.event) {
-    updatedState.event = matchedExhibit.title;
-  }
 
   const quantityInRequest = parseInt(userRequest, 10);
   if (!isNaN(quantityInRequest) && quantityInRequest > 0 && !updatedState.quantity) {
-    updatedState.quantity = quantityInRequest;
+     updatedState.quantity = quantityInRequest;
+  } else if (interpretation.quantity && !updatedState.quantity) {
+    updatedState.quantity = interpretation.quantity;
   }
 
-  const eventData = updatedState.event ? allExhibits.find(e => e.title === updatedState.event) || null : null;
+  const eventData = updatedState.exhibitId ? allExhibits.find(e => e.id === updatedState.exhibitId) || null : null;
 
   return { interpretation, bookingState: updatedState, eventData };
 }

@@ -23,8 +23,6 @@ interface Message {
 }
 
 const initialSuggestions: InterpretUserIntentsOutput = {
-  suggestedDateOptions: [],
-  suggestedTimeOptions: [],
   suggestedTicketQuantities: [1, 2, 4],
   additionalContext: "Hello! I'm your personal ticketing assistant. I can help you book tickets for museum exhibits. How can I help you get started?",
   isAmbiguous: true,
@@ -74,9 +72,15 @@ export default function ChatInterface() {
 
       let content: React.ReactNode;
 
-      // New conversation logic
-      if (!updatedState.event) {
-        content = "Which museum or exhibit would you like to visit?";
+      if (interpretation.isAmbiguous && !updatedState.event) {
+        content = (
+         <SuggestionChips
+           interpretation={initialSuggestions}
+           onSelect={(value) => handleSuggestionSelect(value, updatedState)}
+         />
+       );
+      } else if (!updatedState.event) {
+        content = "I can't seem to find that exhibit. Which museum or exhibit would you like to visit?";
       } else if (!updatedState.quantity) {
         content = `Great! How many tickets would you like for "${updatedState.event}"?`;
       } else if (!updatedState.date) {
@@ -96,7 +100,7 @@ export default function ChatInterface() {
           content = (
             <div className="space-y-2">
               <p>Excellent! We have {updatedState.quantity} tickets available for "{updatedState.event}" on {updatedState.date} at {updatedState.time}.</p>
-              <Button onClick={() => router.push(`/checkout?exhibitId=${eventData?.id}&quantity=${updatedState.quantity}`)}>Proceed to Checkout</Button>
+              <Button onClick={() => router.push(`/checkout?exhibitId=${updatedState.exhibitId}&quantity=${updatedState.quantity}`)}>Proceed to Checkout</Button>
             </div>
           );
         } else {
@@ -105,16 +109,6 @@ export default function ChatInterface() {
           setBookingState({ ...updatedState, time: undefined });
         }
       }
-
-      if (interpretation.isAmbiguous && !updatedState.event) {
-         content = (
-          <SuggestionChips
-            interpretation={initialSuggestions}
-            onSelect={(value) => handleSuggestionSelect(value, updatedState)}
-          />
-        );
-      }
-
 
       const aiMessage: Message = { id: uuidv4(), role: "assistant", content };
       setMessages((prev) => [...prev, aiMessage]);

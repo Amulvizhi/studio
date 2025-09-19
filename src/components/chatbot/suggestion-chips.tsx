@@ -5,7 +5,7 @@ import type { InterpretUserIntentsOutput } from "@/ai/flows/interpret-user-inten
 import { Button } from "@/components/ui/button";
 
 interface SuggestionChipsProps {
-  interpretation: InterpretUserIntentsOutput;
+  interpretation: Partial<InterpretUserIntentsOutput>;
   onSelect: (value: string | number) => void;
 }
 
