@@ -44,14 +44,5 @@ export async function getAiResponse(
 export async function checkAvailability(
   input: CheckRealTimeAvailabilityInput
 ): Promise<CheckRealTimeAvailabilityOutput> {
-  // In a real app, you would check a database. Here we simulate it.
-  const exhibit = allExhibits.find(e => e.title === input.event);
-  if (!exhibit) {
-    return { available: false, availableTickets: 0 };
-  }
-  
-  // The Genkit flow is mocked, here is a more realistic simulation
-  const isAvailable = exhibit.availableSeats >= input.quantity;
-  
-  return { available: isAvailable, availableTickets: exhibit.availableSeats };
+  return await checkRealTimeAvailability(input);
 }
